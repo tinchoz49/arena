@@ -29,7 +29,7 @@ class Queues {
       return this._queues[queueHost][queueName];
     }
 
-    const { type, name, port, host, db, password, prefix, url, redis } = queueConfig;
+    const { type, name, port, host, db, password, prefix, url, redis, bullOptions = {}, beeOptions = {} } = queueConfig;
 
     const redisHost = { host };
     if (password) redisHost.password = password;
@@ -50,11 +50,12 @@ class Queues {
         getEvents: false,
         sendEvents: false,
         storeJobs: false
-      });
+      }, beeOptions);
 
       queue = new Bee(name, options);
       queue.IS_BEE = true;
     } else {
+      _.extend(options, bullOptions);
       queue = new Bull(name, options);
     }
 
